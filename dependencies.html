@@ -72,6 +72,7 @@
       aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="components.html">Components of Weblocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stores.html">Stores</a></li>
 <li class="toctree-l1"><a class="reference internal" href="widgets.html">Widgets</a></li>
@@ -121,6 +122,19 @@
 <li><a class="reference internal" href="#jquery-seq-dependencies-not-stable">jQuery-seq dependencies (not stable)</a></li>
 </ul>
 </li>
+<li><a class="reference internal" href="#notes">Notes</a></li>
+<li><a class="reference internal" href="#id1">Что нужно решить</a></li>
+<li><a class="reference internal" href="#new-dependencies">New dependencies</a><ul>
+<li><a class="reference internal" href="#hierarchy">Hierarchy</a><ul>
+<li><a class="reference internal" href="#dependency">dependency</a></li>
+<li><a class="reference internal" href="#local-dependency">local-dependency</a></li>
+<li><a class="reference internal" href="#remote-dependency">remote-dependency</a></li>
+<li><a class="reference internal" href="#cached-remote-dependency-remote-dependency-local-dependency">cached-remote-dependency (remote-dependency local-dependency)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a class="reference internal" href="#new-kind-of-dependencies">New kind of dependencies</a></li>
 </ul>
 </li>
 </ul>
@@ -172,6 +186,82 @@ application dependencies.</p>
 jquery-seq.  Other way is to download jQuery-seq, to put it into
 pub/scripts/ directory.</p>
 </div>
+</div>
+<div class="section" id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>Зависимости билдятся через вызов (dependencies root) и последующие
+(render-dependency-in-page-head). Между ними дополнительно выполняются
+шаги:</p>
+<div class="highlight-common-lisp"><div class="highlight"><pre><span></span>&lt;DEBUG&gt; [16:47:19] weblocks dependencies.lisp (build-dependencies) -
+  Building dependencies for WEBLOCKS::APP: #&lt;HACRM::HACRM {1003D02BB3}&gt;
+  from WEBLOCKS::DEP-LIST: (#&lt;WEBLOCKS:SCRIPT-DEPENDENCY /pub/scripts/jquery-1.8.2.js&gt;
+                            #&lt;WEBLOCKS:SCRIPT-DEPENDENCY /pub/scripts/jquery-seq.js&gt;
+                            #&lt;WEBLOCKS:SCRIPT-DEPENDENCY /pub/scripts/weblocks-jquery.js&gt;
+                            #&lt;WEBLOCKS:STYLESHEET-DEPENDENCY /bootstrap/css/bootstrap.css&gt;
+                            #&lt;WEBLOCKS:STYLESHEET-DEPENDENCY /pub/stylesheets/twitter-bootstrap.css&gt;
+                            #&lt;WEBLOCKS:STYLESHEET-DEPENDENCY /pub/stylesheets/layout.css&gt;
+                            #&lt;WEBLOCKS:STYLESHEET-DEPENDENCY /pub/stylesheets/main.css&gt;
+                            #&lt;WEBLOCKS:STYLESHEET-DEPENDENCY /pub/stylesheets/dialog.css&gt;
+                            NIL
+                            #&lt;WEBLOCKS:SCRIPT-DEPENDENCY /bootstrap/js/bootstrap.js&gt;)
+
+&lt;DEBUG&gt; [16:47:19] weblocks dependencies.lisp (compact-dependencies) -
+  Compacting dependencies
+&lt;DEBUG&gt; [16:47:19] weblocks dependencies.lisp (prune-dependencies) -
+  Pruning dependencies
+&lt;DEBUG&gt; [16:47:19] weblocks dependencies.lisp (bundle-dependencies) -
+</pre></div>
+</div>
+<p>Метод (dependencies) вызывает (render-widget), который, в свою очередь,
+вызывается из handle-normal-request.</p>
+<p>Метод (render-dependency-in-page-header) вызывается из render-page, а
+тот из handle-normal-request.</p>
+</div>
+<div class="section" id="id1">
+<h2>Что нужно решить<a class="headerlink" href="#id1" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>static dependency должно понимать пути относительно заданной системы.</li>
+<li>не должны создаваться новые одинаковые dependency и роуты (может быть
+сделать around для get-dependencies и в нём кэшировать?)</li>
+<li>роут зависимости должен автоматически включать приложение или виджет,
+чтобы не было конфликтов.</li>
+<li>подумать, что делать с assets, можно ли их как-то переиспользовать.
+Быть может сделать более автоматическими, типа формул, или просто
+сделать тип зависимости asset-dependency, который будет скачивать
+asset и отдавать рендерить на странице несколько зависимостей.</li>
+</ul>
+</div>
+<div class="section" id="new-dependencies">
+<h2>New dependencies<a class="headerlink" href="#new-dependencies" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="hierarchy">
+<h3>Hierarchy<a class="headerlink" href="#hierarchy" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="dependency">
+<h4>dependency<a class="headerlink" href="#dependency" title="Permalink to this headline">¶</a></h4>
+<p>Базовый класс.</p>
+<p>У такой зависимости должен быть определён get-url и content-type. Они
+используются для рендеринга html.</p>
+<p>Влияет на то, рендерится ли зависимость в коде страницы или просто
+отдаётся по route. image имеет смысл только в объединении со static-depdendency.</p>
+</div>
+<div class="section" id="local-dependency">
+<h4>local-dependency<a class="headerlink" href="#local-dependency" title="Permalink to this headline">¶</a></h4>
+<p>Может отдаваться локально, для них заводятся route в веб-сервере.</p>
+<p>Должен быть определён метод serve, отдающий путь до файла или контент.</p>
+<p>Так же должен быть определён get-url, отдающий локальный путь типа &#8220;/dsadsad/dsdsad&#8221;</p>
+</div>
+<div class="section" id="remote-dependency">
+<h4>remote-dependency<a class="headerlink" href="#remote-dependency" title="Permalink to this headline">¶</a></h4>
+<p>Удалённый урл, который просто линкуется в страницу.</p>
+</div>
+<div class="section" id="cached-remote-dependency-remote-dependency-local-dependency">
+<h4>cached-remote-dependency (remote-dependency local-dependency)<a class="headerlink" href="#cached-remote-dependency-remote-dependency-local-dependency" title="Permalink to this headline">¶</a></h4>
+</div>
+</div>
+</div>
+<div class="section" id="new-kind-of-dependencies">
+<h2>New kind of dependencies<a class="headerlink" href="#new-kind-of-dependencies" title="Permalink to this headline">¶</a></h2>
+<p>To define dependencies on whole app, declare a method specialized on
+your app:</p>
 </div>
 </div>
 
