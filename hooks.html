@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Debugging &#8212; weblocks/reblocks 0.30.0 documentation</title>
+    <title>Request Hooks &#8212; weblocks/reblocks 0.30.0 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -31,6 +31,8 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="top" title="weblocks/reblocks 0.30.0 documentation" href="index.html" />
+    <link rel="next" title="Forms" href="forms.html" />
+    <link rel="prev" title="Widgets" href="widgets.html" />
 <meta charset='utf-8'>
 <meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'>
 <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1'>
@@ -67,14 +69,14 @@
      href="index.html">Documentation <b class="caret"></b></a>
   <ul class="dropdown-menu globaltoc"
       role="menu"
-      aria-labelledby="dLabelGlobalToc"><ul>
+      aria-labelledby="dLabelGlobalToc"><ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="quickstart.html">Quickstart</a></li>
 <li class="toctree-l1"><a class="reference internal" href="components.html">Components of Weblocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stores.html">Stores</a></li>
 <li class="toctree-l1"><a class="reference internal" href="widgets.html">Widgets</a></li>
-<li class="toctree-l1"><a class="reference internal" href="hooks.html">Request Hooks</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Request Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forms.html">Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
 <li class="toctree-l1"><a class="reference internal" href="continuations.html">Continuation-based tools</a></li>
@@ -114,17 +116,48 @@
   <div class="row">
       <div class="col-md-3">
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
-<li><a class="reference internal" href="#">Debugging</a></li>
+<li><a class="reference internal" href="#">Request Hooks</a></li>
 </ul>
 
         </div>
       </div>
     <div class="col-md-9 content">
       
-  <div class="section" id="debugging">
-<h1>Debugging<a class="headerlink" href="#debugging" title="Permalink to this headline">¶</a></h1>
-<p>To make debugging easier either start your server with <code class="docutils literal"><span class="pre">:debug</span> <span class="pre">t</span></code>
-option or run <code class="docutils literal"><span class="pre">(weblocks/debug:on)</span></code> from console.</p>
+  <div class="section" id="request-hooks">
+<h1>Request Hooks<a class="headerlink" href="#request-hooks" title="Permalink to this headline">¶</a></h1>
+<p>Hook is a named callbacks list. Depending on name, callbacks are
+called in different places though request processing pipeline.</p>
+<p>TODO: actialize documentation. Example is in the changelog. defhook</p>
+<p>Callback can be bound to <code class="docutils literal"><span class="pre">application</span></code>, <code class="docutils literal"><span class="pre">session</span></code> or
+<code class="docutils literal"><span class="pre">request</span></code>. They are added via these functions
+<code class="docutils literal"><span class="pre">weblocks.hooks:add-application-hook</span></code>,
+<code class="docutils literal"><span class="pre">weblocks.hooks:add-session-hook</span></code> and
+<code class="docutils literal"><span class="pre">weblocks.hooks:add-request-hook</span></code>.</p>
+<p>Session and request hooks can be added only during request processing
+stage and are called only for current session or a request respectively.</p>
+<p>Application hooks can be added at any time and are called for each user
+session and request.</p>
+<p>You can define hooks with custom names. Hook&#8217;s name is any symbol.</p>
+<p>Here are hook names, defined by Weblocks:</p>
+<ul class="simple">
+<li><code class="docutils literal"><span class="pre">:dynamic-action</span></code> – A set of functions that establish dynamic state around a body function in the action context.</li>
+<li><code class="docutils literal"><span class="pre">:pre-action</span></code> – A list of callback functions of no arguments called before user action is evaluated.</li>
+<li><code class="docutils literal"><span class="pre">:post-action</span></code> – A list of callback functions of no arguments called after user action is evaluated.</li>
+<li><code class="docutils literal"><span class="pre">:dynamic-render</span></code> – A set of functions that establish dynamic state around a body function in the render context.</li>
+<li><code class="docutils literal"><span class="pre">:pre-render</span></code> – A list of callback functions of no arguments called before widgets are rendered.</li>
+<li><code class="docutils literal"><span class="pre">:post-render</span></code> – A list of callback functions of no arguments called
+after widgets are rendered.</li>
+<li><code class="docutils literal"><span class="pre">:handle-request</span></code> – Dynamic hook called around request handling
+code. Called when <code class="docutils literal"><span class="pre">weblocks.request:*request*</span></code> and <code class="docutils literal"><span class="pre">weblocks.session:*session*</span></code>
+are already bound.</li>
+<li><code class="docutils literal"><span class="pre">stop-weblocks</span></code> – Wraps code inside of
+<code class="docutils literal"><span class="pre">weblocks.server:stop-weblocks</span></code> function.</li>
+<li><code class="docutils literal"><span class="pre">reset-session</span></code>, which is called around a code for clearing given
+session. Has one parameter – session hash. Right now it is
+called only from <code class="docutils literal"><span class="pre">weblocks.sessions:reset-latest-session</span></code>.</li>
+</ul>
+<p>TODO: Add example of a custom hook.</p>
+<p>TODO: Add description how dynamic hooks are working.</p>
 </div>
 
 
@@ -140,7 +173,7 @@ option or run <code class="docutils literal"><span class="pre">(weblocks/debug:o
         <br/>
         
 <div id="sourcelink">
-  <a href="_sources/debugging.txt"
+  <a href="_sources/hooks.txt"
      rel="nofollow">Source</a>
 </div>
       

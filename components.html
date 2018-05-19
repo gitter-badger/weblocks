@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Components of Weblocks &#8212; weblocks 0.13.7 documentation</title>
+    <title>Components of Weblocks &#8212; weblocks/reblocks 0.30.0 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.13.7',
+        VERSION:     '0.30.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -30,7 +30,7 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="weblocks 0.13.7 documentation" href="index.html" />
+    <link rel="top" title="weblocks/reblocks 0.30.0 documentation" href="index.html" />
     <link rel="next" title="Stores" href="stores.html" />
     <link rel="prev" title="Quickstart" href="quickstart.html" />
 <meta charset='utf-8'>
@@ -51,8 +51,8 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="index.html">
-          weblocks</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.13</b></span>
+          weblocks/reblocks</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.30</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -76,6 +76,7 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Components of Weblocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stores.html">Stores</a></li>
 <li class="toctree-l1"><a class="reference internal" href="widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Request Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forms.html">Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
 <li class="toctree-l1"><a class="reference internal" href="continuations.html">Continuation-based tools</a></li>
@@ -123,7 +124,6 @@
 <li><a class="reference internal" href="#templates">Templates</a><ul>
 <li><a class="reference internal" href="#template-function">Template function</a></li>
 <li><a class="reference internal" href="#template-definition">Template definition</a></li>
-<li><a class="reference internal" href="#template-rendering">Template rendering</a></li>
 </ul>
 </li>
 </ul>
@@ -297,39 +297,6 @@ one defined in Weblocks.</p>
 <p>The source of Weblocks Twitter Bootstrap theme
 <a class="reference external" href="https://github.com/html/weblocks-twitter-bootstrap-application">https://github.com/html/weblocks-twitter-bootstrap-application</a>
 is mostly templates and their definitions. Look there for more examples.</p>
-</div>
-<div class="section" id="template-rendering">
-<h3>Template rendering<a class="headerlink" href="#template-rendering" title="Permalink to this headline">¶</a></h3>
-<p>Template rendering is done via two functions - <code class="docutils literal"><span class="pre">RENDER-WT</span></code> and
-<code class="docutils literal"><span class="pre">RENDER-WT-TO-STRING</span></code>. First one renders template to
-<code class="docutils literal"><span class="pre">*weblocks-output-stream*</span></code>, other one returns a string with rendered
-template.</p>
-<p>Rendering function takes template name, template context parameters and
-other arguments which are passed to template function.</p>
-<div class="code common-lisp highlight-common-lisp"><div class="highlight"><pre><span></span><span class="p">(</span><span class="nv">render-wt</span>
-    <span class="ss">:checkbox-wt</span>
-    <span class="p">(</span><span class="nb">list</span> <span class="ss">:name</span> <span class="nv">name</span> <span class="ss">:id</span> <span class="nv">id</span> <span class="ss">:class</span> <span class="nc">class</span><span class="p">)</span>
-    <span class="ss">:name</span> <span class="p">(</span><span class="nv">attributize-name</span> <span class="nv">name</span><span class="p">)</span>
-    <span class="ss">:id</span> <span class="nv">id</span>
-    <span class="ss">:class</span> <span class="nc">class</span>
-    <span class="ss">:value</span> <span class="p">(</span><span class="k">if</span> <span class="nv">checkedp</span> <span class="s">&quot;t&quot;</span> <span class="s">&quot;f&quot;</span><span class="p">)</span>
-    <span class="ss">:checkedp</span> <span class="nv">checkedp</span>
-    <span class="ss">:onclick</span> <span class="nv">onclick</span>
-    <span class="ss">:disabledp</span> <span class="nv">disabledp</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>First, render function will get all templates associated to
-<code class="docutils literal"><span class="pre">:checkbox-wt</span></code>, then will get every template priority based on
-context, will choose effective template and call it with parameters</p>
-<div class="code common-lisp highlight-common-lisp"><div class="highlight"><pre><span></span><span class="ss">:name</span> <span class="p">(</span><span class="nv">attributize-name</span> <span class="nv">name</span><span class="p">)</span>
-<span class="ss">:id</span> <span class="nv">id</span>
-<span class="ss">:class</span> <span class="nc">class</span>
-<span class="ss">:value</span> <span class="p">(</span><span class="k">if</span> <span class="nv">checkedp</span> <span class="s">&quot;t&quot;</span> <span class="s">&quot;f&quot;</span><span class="p">)</span>
-<span class="ss">:checkedp</span> <span class="nv">checkedp</span>
-<span class="ss">:onclick</span> <span class="nv">onclick</span>
-<span class="ss">:disabledp</span> <span class="nv">disabledp</span>
-</pre></div>
-</div>
 <p class="rubric">Footnotes</p>
 <table class="docutils footnote" frame="void" id="tree" rules="none">
 <colgroup><col class="label" /><col /></colgroup>

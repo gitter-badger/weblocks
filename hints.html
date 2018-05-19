@@ -5,7 +5,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Hints &#8212; weblocks 0.13.7 documentation</title>
+    <title>Hints &#8212; weblocks/reblocks 0.30.0 documentation</title>
     
     <link rel="stylesheet" href="_static/basic.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,7 +15,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '0.13.7',
+        VERSION:     '0.30.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -30,7 +30,7 @@
     <script type="text/javascript" src="_static/bootstrap-sphinx.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="top" title="weblocks 0.13.7 documentation" href="index.html" />
+    <link rel="top" title="weblocks/reblocks 0.30.0 documentation" href="index.html" />
     <link rel="next" title="ChangeLog" href="changelog.html" />
     <link rel="prev" title="Contributing to Weblocks" href="contributing.html" />
 <meta charset='utf-8'>
@@ -51,8 +51,8 @@
           <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="index.html">
-          weblocks</a>
-        <span class="navbar-text navbar-version pull-left"><b>0.13</b></span>
+          weblocks/reblocks</a>
+        <span class="navbar-text navbar-version pull-left"><b>0.30</b></span>
       </div>
 
         <div class="collapse navbar-collapse nav-collapse">
@@ -76,6 +76,7 @@
 <li class="toctree-l1"><a class="reference internal" href="components.html">Components of Weblocks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="stores.html">Stores</a></li>
 <li class="toctree-l1"><a class="reference internal" href="widgets.html">Widgets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="hooks.html">Request Hooks</a></li>
 <li class="toctree-l1"><a class="reference internal" href="forms.html">Forms</a></li>
 <li class="toctree-l1"><a class="reference internal" href="views.html">Views</a></li>
 <li class="toctree-l1"><a class="reference internal" href="continuations.html">Continuation-based tools</a></li>
@@ -117,7 +118,6 @@
         <div id="sidebar" class="bs-sidenav" role="complementary"><ul>
 <li><a class="reference internal" href="#">Hints</a><ul>
 <li><a class="reference internal" href="#basic-sbcl-setup">Basic SBCL setup</a></li>
-<li><a class="reference internal" href="#debugging-techniques">Debugging Techniques</a></li>
 <li><a class="reference internal" href="#deployment">Deployment</a></li>
 <li><a class="reference internal" href="#store-comparison">Store comparison</a><ul>
 <li><a class="reference internal" href="#cl-prevalence">cl-prevalence</a><ul>
@@ -168,12 +168,6 @@
 <li>rlwrap (<a class="reference external" href="http://freshmeat.net/projects/rlwrap/">http://freshmeat.net/projects/rlwrap/</a>);</li>
 <li>clbuild.</li>
 </ul>
-</div>
-<div class="section" id="debugging-techniques">
-<h2>Debugging Techniques<a class="headerlink" href="#debugging-techniques" title="Permalink to this headline">¶</a></h2>
-<p>TRACE (beware builtin funs), BACKTRACE, DESCRIBE
-If no errors show up (sometimes occurs e.g. when working with continuations!)
-try to set weblocks.variables:<em>CATCH-ERRORS-P</em> to nil.</p>
 </div>
 <div class="section" id="deployment">
 <h2>Deployment<a class="headerlink" href="#deployment" title="Permalink to this headline">¶</a></h2>
@@ -268,24 +262,119 @@ a Lispy layer over SQL.</p>
 <h2>Weblocks compared to other frameworks<a class="headerlink" href="#weblocks-compared-to-other-frameworks" title="Permalink to this headline">¶</a></h2>
 <div class="section" id="at-a-glance">
 <h3>At a glance<a class="headerlink" href="#at-a-glance" title="Permalink to this headline">¶</a></h3>
-<dl class="docutils">
-<dt>w_beg(table,r,c,c,c,c,c,c)</dt>
-<dd>|| Weblocks    || UCW/AJAX         || Seaside || PLT Webserver || RubyOnRails || Django //</dd>
-</dl>
-<p>Language                         || Common Lisp || Common Lisp || Smalltalk || Scheme || Ruby || Python //
-Supports REST                    || Yes         ||  ||  || Yes || Yes || Yes //
-Supports multi-tier dispatch     || Yes         ||  ||  ||  || || //
-AJAX support built-in            || Yes         || Yes ||  ||  || No || No //
-Degrades gracefully without AJAX || Yes         || No || (N/A) || (N/A) || No || No //
-Scaffolding/DRY                  || Dynamic     ||  ||  || No || Static || //
-Support for non-SQL databases    || Yes         ||  ||  || Yes || No || //
-Interactive debugging            || Yes         || Yes || Yes || Yes || No || No //
-Bundling/compression built-in    || Yes         ||   ||  ||  || No || No //
-Community                        || Tiny        || Tiny  ||  Small || Small || Medium || Medium //
-Community support                || Yes         ||  ||  ||  || Yes || Yes //
-Commercial support               || Yes         || Yes || Yes ||  || Yes || Yes //
-License                          || LLGPL       ||  || || || ||  //
-w_end(table)</p>
+<table border="1" class="docutils" id="id3">
+<caption><span class="caption-text">Weblocks compared with other frameworks</span><a class="headerlink" href="#id3" title="Permalink to this table">¶</a></caption>
+<colgroup>
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+<col width="17%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">&nbsp;</th>
+<th class="head">Weblocks</th>
+<th class="head">Seaside</th>
+<th class="head">PLT Webserver</th>
+<th class="head">RubyOnRails</th>
+<th class="head">Django</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>Language</td>
+<td>Common Lisp</td>
+<td>Smalltalk</td>
+<td>Scheme</td>
+<td>Ruby</td>
+<td>Python</td>
+</tr>
+<tr class="row-odd"><td>Supports REST</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Suports multi-tier dispatch</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>AJAX support built-in</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Degrades gracefully without AJAX</td>
+<td>Yes</td>
+<td>(N/A)</td>
+<td>(N/A)</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td>Scaffolding/DRY</td>
+<td>Dynamic</td>
+<td>&nbsp;</td>
+<td>No</td>
+<td>Static</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>Support for non-SQL databases</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td>No</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td>Interactive debugging</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="row-even"><td>Bundling/compression built-in</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr class="row-odd"><td>Community</td>
+<td>Tiny</td>
+<td>Small</td>
+<td>Small</td>
+<td>Medium</td>
+<td>Medium</td>
+</tr>
+<tr class="row-even"><td>Community support</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-odd"><td>Commercial support</td>
+<td>Yes</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>Yes</td>
+<td>Yes</td>
+</tr>
+<tr class="row-even"><td>Licence</td>
+<td>LLGPL</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div class="section" id="in-depth-comparison">
 <h3>In-depth comparison<a class="headerlink" href="#in-depth-comparison" title="Permalink to this headline">¶</a></h3>
